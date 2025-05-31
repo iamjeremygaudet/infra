@@ -34,6 +34,8 @@ services:
       - ${CADDY_CONFIG_PATH}/site:/srv
       - caddy_data:/data
       - caddy_config:/config
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
 
 volumes:
   caddy_data:
