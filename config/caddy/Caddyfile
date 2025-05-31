@@ -136,7 +136,7 @@ qbittorrent.unwiredin.com {
                 output file /var/log/caddy/qbittorrent.unwiredin.com.log
                 format console
         }
-        reverse_proxy http://10.10.10.10:9999 # qBittorrent's web UI accessed on host port 9999 (mapped from Gluetun's 8080)
+        reverse_proxy http://10.10.10.10:8180 # qBittorrent's web UI accessed on host port 9999 (mapped from Gluetun's 8080)
         import custom_errors
 }
 
@@ -146,6 +146,6 @@ sabnzbd.unwiredin.com {
                 output file /var/log/caddy/sabnzbd.unwiredin.com.log
                 format console
         }
-        reverse_proxy http://10.10.10.10:8180 # Sabnzbd accessed on host port 8180 (mapped from Gluetun's 8180)
+        reverse_proxy http://10.10.10.10:8080 # Sabnzbd accessed on host port 8180 (mapped from Gluetun's 8180)
         import custom_errors
 }
