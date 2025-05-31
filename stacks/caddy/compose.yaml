@@ -21,6 +21,8 @@ services:
     container_name: caddy-${CADDY_TAG}
     hostname: caddy
     restart: unless-stopped
+    networks:
+      - proxy
     ports:
       - "80:80"
       - "443:443"
