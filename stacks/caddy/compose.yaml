@@ -12,12 +12,14 @@
 #
 # Services included:
 # - caddy: https://github.com/caddyserver/caddy
+# - caddy-cloudflare: https://github.com/serfriz/caddy-custom-builds/tree/main/caddy-cloudflare
 
 # -----------------------------------------------------------------------------------    
 
 services:
   caddy:
-    image: caddy:${CADDY_TAG}
+    #image: caddy:${CADDY_TAG}
+    image: serfriz/caddy-cloudflare:latest
     container_name: caddy-${CADDY_TAG}
     hostname: caddy
     restart: unless-stopped
