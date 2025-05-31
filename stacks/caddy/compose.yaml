@@ -30,7 +30,7 @@ services:
       - "443:443/udp"
     volumes:
       - ${CADDY_CONFIG_PATH}:/etc/caddy/Caddyfile
-      - ${CADDY_CONFIG_PATH/site:/srv
+      - ${CADDY_CONFIG_PATH}/site:/srv
       - caddy_data:/data
       - caddy_config:/config
 
