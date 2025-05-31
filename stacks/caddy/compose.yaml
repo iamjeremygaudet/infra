@@ -34,8 +34,14 @@ services:
       - ${CADDY_CONFIG_PATH}/site:/srv
       - caddy_data:/data
       - caddy_config:/config
-    environment:
-      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+    secrets:
+      - cloudflare_api_token
+    # environment:
+    #   - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+
+secrets:
+  cloudflare_api_token:
+    file: ~/docker_secrets/cloudflare_api_token.txt
 
 volumes:
   caddy_data:
