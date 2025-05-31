@@ -4,11 +4,11 @@
 # ----------------------------------------------------------------------------------
 
 #
-# error-pages is a complete docker stack for serving custom error pages
-#
+# error-pages is a complete docker stack for handling HTTP errors with a 
+# customizable template, integrated with Caddy for serving web content.
 #
 # Services included:
-# - caddy: https://github.com/caddyserver/caddy
+# - error-pages: https://github.com/tarampampam/error-pages
 
 # -----------------------------------------------------------------------------------    
 
@@ -18,4 +18,9 @@ services:
     environment:
       TEMPLATE_NAME: l7
     networks:
-      - caddy_net # Ensure this service is on the same network as Caddy
+      - proxy # Ensure this service is on the same network as Caddy
+
+networks:
+  proxy:
+    external: true # Use the existing 'proxy' network for communication with Caddy
+    name: proxy # Ensure the network name matches the one used in Caddy's compose file
