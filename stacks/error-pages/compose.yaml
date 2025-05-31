@@ -1,0 +1,21 @@
+# /error-pages/compose.yaml
+
+
+# ----------------------------------------------------------------------------------
+
+#
+# error-pages is a complete docker stack for serving custom error pages
+#
+#
+# Services included:
+# - caddy: https://github.com/caddyserver/caddy
+
+# -----------------------------------------------------------------------------------    
+
+services:
+  error-pages:
+    image: ghcr.io/tarampampam/error-pages:3
+    environment:
+      TEMPLATE_NAME: l7
+    networks:
+      - caddy_net # Ensure this service is on the same network as Caddy

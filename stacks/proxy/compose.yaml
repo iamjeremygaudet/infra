@@ -1,0 +1,108 @@
+# /proxy/compose.yaml
+#
+
+# ----------------------------------------------------------------------------------
+
+#
+# proxy is a complete docker stack for caddy-docker-proxy.
+#
+# This configuration sets up default properties for all caddy-docker-proxy and 
+# environment-specific settings for a seamless setup.
+#
+# Services included:
+# - caddy-docker-proxy: https://github.com/lucaslorentz/caddy-docker-proxy
+
+# -----------------------------------------------------------------------------------
+
+
+#
+# Setup base properties for all or most containers
+#
+x-base-container: &base-container  # YAML anchor for base container
+  pull_policy: always              # Ensure that the image is always pulled
+  logging:                         # Configure container logging options
+    driver: "json-file"            # Use JSON file logging driver
+    options:
+      max-size: ${LOG_MAX_SIZE}    # Maximum file size for logs files
+      max-file: ${LOG_MAX_FILE}    # Maximum number of log files to retain
+
+#
+# Setup default properties for all or most containers
+#
+x-default-container: &default-container  # YAML anchor for default container
+  <<: *base-container                    # Pull in the base container information
+  restart: unless-stopped                # Restart the container unless explicitly stopped
+
+#
+# Setup default variables for all or most containers
+#
+x-default-environment: &default-environment  # YAML anchor for default environment
+    TZ: ${TZ}                                # Set the appropriate timezone
+
+#
+# Setup default variables for arr-stack containers
+#
+x-arr-stack-environment: &arr-stack-environment  # YAML anchor for arr-stack environment
+    <<: *default-environment                     # Pull in the default environment information
+    PUID: ${DEFAULT_PUID}                        # Default user id mapping for containers
+    PGID: ${DEFAULT_PGID}                        # Default group id mapping for containers
+
+#
+# Containers on the arr-stack network
+#
+x-arr-stack-container: &arr-stack-container  # YAML anchor for arr-stack container
+  <<: *default-container                     # Pull in the default container information
+  group_add:                                 # Add additional user groups
+    - ${DEFAULT_GROUP}                       # Default group used to manage write permissions
+  environment:                               # Define common arr-stack container variables
+    <<: *arr-stack-environment               # Pull in the arr-stack environment information
+
+#
+# Define the services section
+#
+
+services:
+
+  #
+  # Define the 'prowlarr' service for managing indexers
+  #
+  caddy-docker-proxy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    restart: unless-stopped
+    environment:
+      # Point to remote Caddy admin API
+      - CADDY_ADMIN_ENDPOINT=http://10.10.1.3:2019
+      
+      # Network that containers should be on to be discovered
+      - CADDY_INGRESS_NETWORKS=caddy
+      
+      # Optional: Enable debug logging
+      - CADDY_DOCKER_PROXY_DEBUG=1
+      
+      # Poll interval for Docker events
+      - CADDY_DOCKER_POLLING_INTERVAL=5s
+    volumes:
+      # Required: Docker socket access
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - caddy
+    # Note: No ports exposed since Caddy is running remotely
+
+  # Example service that will be proxied
+  whoami:
+    image: traefik/whoami
+    networks:
+      - caddy
+    labels:
+      # This tells caddy-docker-proxy to create a route
+      caddy: whoami.yourdomain.com
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+networks:
+  caddy:
+    external: false
+
+# Optional: If you want to persist any local data
+volumes:
+  caddy_data:
+  caddy_config:

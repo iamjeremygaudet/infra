@@ -1,0 +1,151 @@
+# Global configuration
+{
+        email jeremysgaudet@gmail.com
+        acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+
+        # Use staging environment for testing - comment out for production
+        # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+
+        log {
+                output file /var/log/caddy/access.log
+                format json
+        }
+
+        servers {
+                timeouts {
+                        read_header 10s
+                        read_body 30s # Assuming 'read_timeout' in your original meant body read
+                        write 10s
+                        idle 30s
+                }
+        }
+}
+
+# Custom error page handling snippet
+(custom_errors) {
+        handle_errors {
+                # Set the root directory for your error pages
+                root * /srv/www/error-pages/noise
+
+                # Check if an error file like 404.html, 500.html exists
+                @error_file_exists file {http.error.status_code}.html
+
+                handle @error_file_exists {
+                        rewrite * /{http.error.status_code}.html
+                        file_server
+                }
+
+                # Optional: Fallback to a default error page if a specific one isn't found
+                # This assumes you have a file named 'default.html' in /srv/www/error-pages/noise
+                # handle {
+                #     rewrite * /default.html
+                #     file_server
+                # }
+        }
+}
+
+# Test domain for DNS challenge verification
+lab.unwiredin.com {
+        respond "Hello from Caddy on lab.unwiredin.com! TLS by Cloudflare DNS."
+        import custom_errors
+}
+
+# Unraid reverse proxy
+unraid.unwiredin.com {
+        log {
+                output file /var/log/caddy/unraid.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.1.10:1080
+        import custom_errors
+}
+
+# Authelia reverse proxy
+auth.unwiredin.com {
+        log {
+                output file /var/log/caddy/auth.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.1.4:9091
+        import custom_errors
+}
+
+# Bazarr reverse proxy
+bazarr.unwiredin.com {
+        log {
+                output file /var/log/caddy/bazarr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:6767
+        import custom_errors
+}
+
+# Radarr reverse proxy
+radarr.unwiredin.com {
+        log {
+                output file /var/log/caddy/radarr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:7878
+        import custom_errors
+}
+
+# Sonarr reverse proxy
+sonarr.unwiredin.com {
+        log {
+                output file /var/log/caddy/sonarr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:8989
+        import custom_errors
+}
+
+# Readarr reverse proxy
+readarr.unwiredin.com {
+        log {
+                output file /var/log/caddy/readarr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:8787
+        import custom_errors
+}
+
+# Overseerr reverse proxy
+overseerr.unwiredin.com {
+        log {
+                output file /var/log/caddy/overseerr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:5055
+        import custom_errors
+}
+
+# Prowlarr reverse proxy
+prowlarr.unwiredin.com {
+        log {
+                output file /var/log/caddy/prowlarr.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:9696
+        import custom_errors
+}
+
+# qBittorrent reverse proxy (via Gluetun)
+qbittorrent.unwiredin.com {
+        log {
+                output file /var/log/caddy/qbittorrent.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:9999 # qBittorrent's web UI accessed on host port 9999 (mapped from Gluetun's 8080)
+        import custom_errors
+}
+
+# Sabnzbd reverse proxy (via Gluetun)
+sabnzbd.unwiredin.com {
+        log {
+                output file /var/log/caddy/sabnzbd.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.10.10:8180 # Sabnzbd accessed on host port 8180 (mapped from Gluetun's 8180)
+        import custom_errors
+}

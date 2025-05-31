@@ -1,0 +1,39 @@
+# /caddy/compose.yaml
+
+
+# ----------------------------------------------------------------------------------
+
+#
+# Acquire is a complete docker stack for download-related self-hosted applications
+#
+# compose.yaml: Docker Compose configuration for setting up a suite of services
+# that utilize ProtonVPN with WireGuard, managed through Gluetun, and including
+# download-related self-hosted applications.
+#
+# This configuration sets up default properties for all containers, integrates
+# ProtonVPN, and provides environment-specific settings for a seamless VPN setup.
+#
+# Services included:
+# - caddy: https://github.com/caddyserver/caddy
+
+# -----------------------------------------------------------------------------------    
+
+services:
+  caddy:
+    image: caddy:${CADDY_TAG}
+    container_name: caddy-${CADDY_TAG}
+    hostname: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ${CADDY_CONFIG_PATH}:/etc/caddy/Caddyfile
+      - ${CADDY_CONFIG_PATH/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
