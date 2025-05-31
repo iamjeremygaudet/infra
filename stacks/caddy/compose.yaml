@@ -36,8 +36,7 @@ services:
       - caddy_config:/config
     secrets:
       - cloudflare_api_token
-    # environment:
-    #   - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+    entrypoint: ["/bin/sh", "-c", "export CLOUDFLARE_API_TOKEN=$(cat /run/secrets/cloudflare_api_token) && caddy run --config /etc/caddy/Caddyfile"]
 
 secrets:
   cloudflare_api_token:
