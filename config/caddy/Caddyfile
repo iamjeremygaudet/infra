@@ -45,8 +45,28 @@
 }
 
 # Test domain for DNS challenge verification
-lab.unwiredin.com {
+test.unwiredin.com {
         respond "Hello from Caddy on lab.unwiredin.com! TLS by Cloudflare DNS."
+        import custom_errors
+}
+
+# atlas reverse proxy
+atlas.unwiredin.com {
+        log {
+                output file /var/log/caddy/atlas.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.1.12:8006/
+        import custom_errors
+}
+
+# apollo reverse proxy
+apollo.unwiredin.com {
+        log {
+                output file /var/log/caddy/apollo.unwiredin.com.log
+                format console
+        }
+        reverse_proxy http://10.10.1.11:8006/
         import custom_errors
 }
 
