@@ -52,22 +52,34 @@ test.unwiredin.com {
 
 # atlas reverse proxy
 atlas.unwiredin.com {
-        log {
-                output file /var/log/caddy/atlas.unwiredin.com.log
-                format console
+    log {
+        output file /var/log/caddy/atlas.unwiredin.com.log
+        format console
+    }
+
+    reverse_proxy https://10.10.1.12:8006 {
+        transport http {
+            tls_insecure_skip_verify
         }
-        reverse_proxy http://10.10.1.12:8006/
-        import custom_errors
+    }
+
+    import custom_errors
 }
 
 # apollo reverse proxy
 apollo.unwiredin.com {
-        log {
-                output file /var/log/caddy/apollo.unwiredin.com.log
-                format console
+    log {
+        output file /var/log/caddy/apollo.unwiredin.com.log
+        format console
+    }
+
+    reverse_proxy https://10.10.1.11:8006 {
+        transport http {
+            tls_insecure_skip_verify
         }
-        reverse_proxy http://10.10.1.11:8006/
-        import custom_errors
+    }
+
+    import custom_errors
 }
 
 # Unraid reverse proxy
