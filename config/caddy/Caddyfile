@@ -92,14 +92,22 @@ unraid.unwiredin.com {
         import custom_errors
 }
 
-# Authelia reverse proxy
-auth.unwiredin.com {
+# Vaultwarden reverse proxy
+vaultwarden.unwiredin.com {
         log {
-                output file /var/log/caddy/auth.unwiredin.com.log
+                output file /var/log/caddy/vaultwarden.unwiredin.com.log
                 format console
         }
-        reverse_proxy http://10.10.1.4:9091
-        import custom_errors
+        reverse_proxy http://10.10.1.3:8686
+    
+    # Optional: Add security headers
+    header {
+        # Security headers
+        Strict-Transport-Security max-age=31536000;
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer-when-downgrade
+    }
 }
 
 # Bazarr reverse proxy

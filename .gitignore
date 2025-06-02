@@ -45,3 +45,4 @@ credentials.*
 secrets.*
 *.token
 *.secret
+**/.secrets.*
